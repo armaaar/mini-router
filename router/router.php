@@ -3,6 +3,7 @@
 class RouterBrain
 {
     private $prefixes = [];
+    private $uri_matched = false;
 
     // essential functions
     public function get_uri()
@@ -22,6 +23,7 @@ class RouterBrain
       $uri = $this->add_prefixes_to_uri($uri);
       if($uri == $current_uri || $uri == $current_uri.'/')
       {
+        $this->uri_matched = true;
         $controller();
       }
     }
@@ -87,6 +89,21 @@ class RouterBrain
         $this->uri_controller_mapper($uri, $controller);
       }
     }
+
+    public function any($uri, $controller)
+    {
+        $this->uri_controller_mapper($uri, $controller);
+    }
+
+    public function fallback($controller)
+    {
+      if(!$this->uri_matched)
+      {
+        $controller();
+      }
+    }
+
+
 
 
 }

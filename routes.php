@@ -20,3 +20,7 @@ $router->group('/api', function($router){
     echo "list of boxes";
   });
 });
+
+$router->fallback(function(){
+  echo "Page Not Found";
+});
