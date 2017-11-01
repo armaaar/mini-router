@@ -10,3 +10,13 @@ $router->get('/', "homePageController");
 $router->get('/laugh', function(){
   echo "hahaha";
 });
+
+$router->group('/api', function($router){
+
+  $router->get('/users', function(){
+    echo "list of users";
+  });
+  $router->get('/boxes', function(){
+    echo "list of boxes";
+  });
+});
