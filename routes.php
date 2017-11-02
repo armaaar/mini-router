@@ -29,8 +29,8 @@ $router->group("/router", function($router){
 
   $router->get('/', "homePageController");
 
-  $router->get('/laugh', function(){
-    echo "hahaha";
+  $router->get('/laugh', function($args){
+    echo "hahaha ".$args["lala"];
   }, ["is_user", "is_admin"]);
 });
 

@@ -42,7 +42,8 @@ class RouterBrain
           if($this->filters_pass($filters))
           {
             $this->uri_matched = true;
-            $controller();
+            // call the controller passing array of request parameters
+            $controller($this->request_parameters($this->http_method()));
           }
         }
       }
@@ -93,6 +94,19 @@ class RouterBrain
       return true;
     }
 
+    // Request parameters
+    private function request_parameters($request_method)
+    {
+      $params = [];
+      if ($request_method == "GET" || $request_method == "HEAD") {
+          $params = $_GET;
+      } else if ($request_method == "POST") {
+          $params = $_POST;
+      } else if ($request_method == "PUT" || $request_method == "DELETE" || $request_method == "PATCH") {
+        parse_str(file_get_contents('php://input'), $params);
+      } else
+      return $params;
+    }
 
     // Methods Functions
     public function get($uri, $controller, $filters=null)
@@ -152,7 +166,8 @@ class RouterBrain
     {
       if(!$this->uri_matched)
       {
-        $controller();
+        // call the controller passing array of request parameters
+        $controller($this->request_parameters($this->http_method()));
       }
     }
 
