@@ -7,9 +7,15 @@ $router = new RouterBrain();
 
 $router->get('/', "homePageController");
 
-$router->get('/laugh', function(){
-  echo "hahaha";
+$router->group("/router", function($router){
+
+  $router->get('/', "homePageController");
+
+  $router->get('/laugh', function(){
+    echo "hahaha";
+  });
 });
+
 
 $router->group('/api', function($router){
 

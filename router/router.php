@@ -8,7 +8,9 @@ class RouterBrain
     // essential functions
     public function get_uri()
     {
-      return explode('?', $_SERVER['REQUEST_URI'], 2)[0];
+      $uri = explode('?', $_SERVER['REQUEST_URI'], 2)[0];
+      // get rid of double slashes
+      return $this->prepare_uri($uri);
     }
 
     public function http_method()
@@ -16,12 +18,20 @@ class RouterBrain
       return strtoupper($_SERVER['REQUEST_METHOD']);
     }
 
+    private function prepare_uri($uri)
+    {
+      // make sure there are slashes before and after uri
+      $uri = '/'.$uri.'/';
+      // get rid of extra slashes
+      return preg_replace('/(\/+)/','/',$uri);
+    }
+
     // map URI to Controller
     private function uri_controller_mapper($uri, $controller)
     {
       $current_uri = $this->get_uri();
       $uri = $this->add_prefixes_to_uri($uri);
-      if($uri == $current_uri || $uri == $current_uri.'/')
+      if($uri == $current_uri)
       {
         $this->uri_matched = true;
         $controller();
@@ -31,7 +41,8 @@ class RouterBrain
     // Prefixes and groups
     private function add_prefixes_to_uri($uri)
     {
-      return join("",$this->prefixes).$uri;
+      $uri = join("",$this->prefixes).'/'.$uri;
+      return $this->prepare_uri($uri);
     }
 
     public function group($prefix, $callback)
