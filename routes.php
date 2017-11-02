@@ -3,7 +3,25 @@
 require_once('router/router.php');
 require_once('controllers/homepage.php');
 
+$user = true;
+$admin = true;
+
 $router = new RouterBrain();
+
+$router->filter("is_user", function(){
+  global $user;
+  if($user)
+    return true;
+  return false;
+});
+
+
+$router->filter("is_admin", function(){
+  global $admin;
+  if($admin)
+    return true;
+  return false;
+});
 
 $router->get('/', "homePageController");
 
@@ -13,7 +31,7 @@ $router->group("/router", function($router){
 
   $router->get('/laugh', function(){
     echo "hahaha";
-  });
+  }, ["is_user", "is_admin"]);
 });
 
 
