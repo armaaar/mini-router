@@ -27,7 +27,11 @@ $router->get('/', "homePageController");
 
 $router->group("/router", function($router){
 
-  $router->get('/', "homePageController");
+  $router->get(['/', "index"], "homePageController");
+  $router->get('/home', function(){
+    global $router;
+    $router->route("index");
+  });
 
   $router->get('/laugh', function($args){
     echo "hahaha ".$args["lala"];
