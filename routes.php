@@ -6,7 +6,7 @@ require_once('controllers/homepage.php');
 $user = true;
 $admin = true;
 
-$router = new RouterBrain();
+$router = new miniRouter();
 
 $router->filter("is_user", function(){
   global $user;
@@ -28,10 +28,8 @@ $router->get('/', "homePageController");
 $router->group("/router", function($router){
 
   $router->get(['/', "index"], "homePageController");
-  $router->get('/home', function(){
-    global $router;
-    $router->route("index");
-  });
+
+  $router->get('/home', "homeCloneController");
 
   $router->get('/laugh', function($args){
     echo "hahaha ".$args["lala"];

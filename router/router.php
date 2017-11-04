@@ -1,6 +1,6 @@
 <?php
 
-class RouterBrain
+class miniRouter
 {
     private $prefixes = [];
     private $filters = [];
