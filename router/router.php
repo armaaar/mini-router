@@ -57,11 +57,14 @@ class miniRouter
       return $this->prepare_uri($uri);
     }
 
-    public function group($prefix, $callback)
+    public function group($prefix, $callback, $filters=null)
     {
-      array_push($this->prefixes, $prefix);
-      $callback($this);
-      array_pop($this->prefixes);
+      if($this->filters_pass($filters))
+      {
+        array_push($this->prefixes, $prefix);
+        $callback($this);
+        array_pop($this->prefixes);
+      }
     }
 
     // filters
