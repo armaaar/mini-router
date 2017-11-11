@@ -44,7 +44,8 @@ class miniRouter
           {
             $this->uri_matched = true;
             // call the controller passing array of request parameters
-            $controller($this->request_parameters($this->http_method()));
+            $this->set_method_parameters();
+            $controller();
           }
         }
       }
@@ -152,17 +153,15 @@ class miniRouter
     }
 
     // Request parameters
-    private function request_parameters($request_method)
+    private function set_method_parameters()
     {
+      $request_method = $this->http_method();
       $params = [];
-      if ($request_method == "GET" || $request_method == "HEAD") {
-          $params = $_GET;
-      } else if ($request_method == "POST") {
-          $params = $_POST;
-      } else if ($request_method == "PUT" || $request_method == "DELETE" || $request_method == "PATCH") {
+      if ($request_method == "PUT" || $request_method == "DELETE" || $request_method == "PATCH" || $request_method == "HEAD")
+      {
         parse_str(file_get_contents('php://input'), $params);
-      } else
-      return $params;
+        $_REQUEST = array_merge($_REQUEST, $params);
+      }
     }
 
     // Methods Functions
@@ -280,7 +279,8 @@ class miniRouter
       if(!$this->uri_matched)
       {
         // call the controller passing array of request parameters
-        $controller($this->request_parameters($this->http_method()));
+        $this->set_method_parameters();
+        $controller();
       }
     }
 

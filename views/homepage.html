@@ -9,5 +9,24 @@
     </head>
     <body>
       Home Page
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.js"></script>
+      <script type="text/javascript">
+        var baseURL = window.location.protocol + "//" + window.location.host + "/router";
+        $.ajax({
+          method: "HEAD",
+          url: baseURL + '/api/users',
+          dataType: 'text',
+          data: {
+            q: 'term',
+          },
+          success: function(result){
+            $( "body" ).append(result);
+          }
+        })
+        .fail(function() {
+          alert( "Error: Couldn't fetch the logos. Please try again. If this message keeps appearing contact us immediately.");
+        });
+      </script>
     </body>
+
 </html>

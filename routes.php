@@ -20,7 +20,7 @@ $router->filter("is_admin", function(){
   global $admin;
   if($admin)
     return true;
-  return false;
+  return true;
 });
 
 $router->get('/', "homePageController");
@@ -31,13 +31,14 @@ $router->group("/router", function($router){
 
   $router->get('/home', "homeCloneController");
 
-  $router->get('/laugh', function($args){
-    echo "hahaha ".$args["lala"];
+  $router->get('/laugh', function(){
+
+    echo "hahaha ".$_REQUEST["lala"];
   }, ["is_user", "is_admin"]);
 
   $router->group('/api', function($router){
 
-    $router->get('/users', function(){
+    $router->any('/users', function(){
       echo "list of users";
     });
     $router->get('/boxes', function(){
