@@ -27,9 +27,12 @@ $router->get('/', "homePageController");
 
 $router->group("/router", function($router){
 
-  $router->get(['/', "index"], "homePageController");
+  $router->get(['/house/{:s}/([a-zA-Z0-9+_\-\.]+)', "index"], "homePageController");
 
-  $router->get('/home', "homeCloneController");
+
+
+
+  $router->get('/home/{:s}?/', "homeCloneController");
 
   $router->get('/laugh', function(){
 

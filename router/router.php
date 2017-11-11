@@ -6,6 +6,12 @@ class miniRouter
     private $filters = [];
     private $routes = [];
     private $uri_matched = false;
+    private $regexShortcuts = array(
+        '{:i}'  => '([0-9]+)',
+      	'{:a}'  => '([0-9A-Za-z]+)',
+      	'{:h}'  => '([0-9A-Fa-f]+)',
+        '{:s}'  => '([a-zA-Z0-9+_\-\.]+)'
+    );
 
     // essential functions
     public function get_uri()
@@ -29,26 +35,47 @@ class miniRouter
     }
 
     // map URI to Controller
-    private function uri_controller_mapper($uri, $controller, $filters=null, $skip_uri_match = false)
+    private function uri_controller_mapper($uri, $controller, $filters=null, $route_args = false)
     {
       // check if there is no uri matcher yet
       if(!$this->uri_matched)
       {
         // check if this is the right uri
-        $current_uri = $this->get_uri();
-        $uri = $this->add_prefixes_to_uri($uri);
-        if($uri == $current_uri || $skip_uri_match)
+        if(is_array($route_args))
+        {
+          $parameters = $route_args;
+        } else {
+          $parameters = $this->uri_match($uri);
+        }
+        if($parameters !== false)
         {
           // Check if all filters return true
           if($this->filters_pass($filters))
           {
             $this->uri_matched = true;
             // call the controller passing array of request parameters
-            $this->set_method_parameters();
-            $controller();
+            if(!is_array($route_args))
+            {
+              $this->set_method_parameters();
+            }
+            call_user_func_array($controller, $parameters);
           }
         }
       }
+    }
+
+    private function uri_match($uri)
+    {
+      $matches = [];
+      $current_uri = $this->get_uri();
+      $uri = $this->add_prefixes_to_uri($uri);
+      $uri = strtr($uri, $this->regexShortcuts);
+      $uri = preg_replace('/(\/+)/','\/',$uri);
+      if (!preg_match("/^".$uri."?$/", $current_uri, $matches)) {
+        return false;
+      }
+      array_shift($matches);
+      return $matches;
     }
 
     // Prefixes and groups
@@ -114,18 +141,38 @@ class miniRouter
 
     }
 
-    public function route($name, $redirect = false)
+    public function route($name, $args = [], $redirect = false)
     {
       //$this->routes[$name] = ["uri" => $uri, "controller" => $controller, "prefixes" => $this->prefixes, "filters" => $filters, "method" => $method];
       if(array_key_exists($name, $this->routes))
       {
         $old_prefixes = $this->prefixes;
         $this->prefixes = $this->routes[$name]["prefixes"];
+        if(!is_array($args))
+        {
+          $args = [$args];
+        }
         if($redirect)
         {
-          if($this->routes[$name]["method"] === "GET" || $this->routes[$name]["method"] === "HEAD")
+          if($this->routes[$name]["method"] === "GET" || $this->routes[$name]["method"] === "HEAD" || $this->routes[$name]["method"] === "ANY")
           {
             $uri = $this->add_prefixes_to_uri($this->routes[$name]["uri"]);
+
+            if(preg_match_all('/({:\w}|\([^\)]+\)*)\??/', $uri, $patterns))
+            {
+              $patterns = $patterns[0];
+              foreach ($patterns as $index => $pattern) {
+                $pos = strpos($uri, $pattern);
+                if(!array_key_exists($index, $args))
+                {
+                  $args[$index] = '';
+                }
+                $uri = substr_replace($uri, $args[$index], $pos, strlen($pattern));
+              }
+              $uri = str_replace($patterns, $args, $uri);
+
+            }
+            $uri = $this->prepare_uri($uri);
             header("Location: ".$uri);
             return true;
           } else {
@@ -135,10 +182,10 @@ class miniRouter
           }
 
         } else { // IF NOT REDIRECT
-          if($this->routes[$name]["method"] === $this->http_method())
+          if($this->routes[$name]["method"] === $this->http_method()  || $this->routes[$name]["method"] === "ANY")
           {
             $this->uri_matched = false;
-            $this->uri_controller_mapper($this->routes[$name]["uri"], $this->routes[$name]["controller"], $this->routes[$name]["filters"], true);
+            $this->uri_controller_mapper($this->routes[$name]["uri"], $this->routes[$name]["controller"], $this->routes[$name]["filters"], $args);
           } else {
             trigger_error("Can't redirect to route '$name' because it has different method from requested", E_USER_NOTICE);
             $this->prefixes = $old_prefixes;
