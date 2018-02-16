@@ -204,6 +204,11 @@ class miniRouter
     {
       $request_method = $this->http_method();
       $params = [];
+      // check if request is json
+      if(isset($_SERVER['CONTENT_TYPE']) && strpos($_SERVER['CONTENT_TYPE'], 'application/json') !== false)
+      {
+        $_REQUEST["JSON_DATA"] = json_decode(file_get_contents('php://input'));
+      }
       if ($request_method == "PUT" || $request_method == "DELETE" || $request_method == "PATCH" || $request_method == "HEAD")
       {
         parse_str(file_get_contents('php://input'), $params);
@@ -332,3 +337,4 @@ class miniRouter
     }
 
 }
+?>
