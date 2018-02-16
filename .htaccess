@@ -1,6 +1,4 @@
-
 Options -MultiViews
 RewriteEngine On
-RewriteCond %{REQUEST_URI} !^/index.html$
-RewriteCond %{REQUEST_URI} !\.(gif|jpe?g|png|css|js)$
-RewriteRule .* routes.php [QSA,L]
+RewriteCond %{REQUEST_URI} !\..+$
+RewriteRule .* index.php [QSA,L]
