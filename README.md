@@ -37,7 +37,7 @@ $router->head($route, $handler); # match only head requests
 $router->any($route, $handler);    # match any request method
 
 ```
-These methods accepts the HTTP method the route must match, the route pattern and a callable handler, which can be a closure, function name or ['ClassName', 'method'] pair. Note that the router doesn't by default echo the returned value from the handler, so if you want to send something back to the client you need to `echo` it, not `return` it.
+These methods accepts the HTTP method the route must match, the route pattern and a callable handler, which can be a closure, function name or ['ClassName', 'method'] pair. Note that the router doesn't by default echo the returned value from the handler, so if you want to send something back to the client you need to `echo` it, not to `return` it.
 
 ### Regex Shortcuts
 
@@ -160,8 +160,9 @@ $router->group('/', function($router){
 
     $router->get('/user/{:a}', function($name){
         echo 'Hello ' . $name;
-    })
-    ->get('/page/{:i}', function($id){
+    });
+
+    $router->get('/page/{:i}', function($id){
         return 'You must be authenticated to see this page: ' . $id;
     });
 
