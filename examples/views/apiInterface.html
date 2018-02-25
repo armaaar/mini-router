@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>API Test Page</title>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.js"></script>
+    </head>
+    <body>
+      <h1>API Test Page</h1>
+
+      <p>For this page to work correctly, make sure that the js `baseURL` variable is set correctly specially if you are testing this page inside any subdirectory.</p>
+
+
+      <h3>Test Various Request Types</h3>
+      <p>miniRouter can work on GET, HEAD, POST, PUT, PATCH and DELETE methods.</p>
+      <p>Note that HEAD requests won't return any content.</p>
+      <a href="javascript:;" onclick="simpleRequest('GET')">GET</a>,
+      <a href="javascript:;" onclick="simpleRequest('HEAD')">HEAD</a>,
+      <a href="javascript:;" onclick="simpleRequest('POST')">POST</a>,
+      <a href="javascript:;" onclick="simpleRequest('PUT')">PUT</a>,
+      <a href="javascript:;" onclick="simpleRequest('PATCH')">PATCH</a>,
+      <a href="javascript:;" onclick="simpleRequest('DELETE')">DELETE</a>
+
+      <br><br>
+      <h3>Play Ping Pong with the server using PUT requests</h3>
+      <p>
+        Using miniRouter, parameters passed with HEAD, PUT, PATCH and DELETE methods can be accessed from the global `$_REQUEST` variable
+      </p>
+      <a href="javascript:;" onclick="pingPong('Ping')">Ping!</a> -
+      <a href="javascript:;" onclick="pingPong('Pong')">Pong!</a>
+
+
+      <br><br>
+      <h3>Get JSON DATA from server</h3>
+      <p>
+        You can use miniRouter to build APIs easily.
+      </p>
+      <a href="javascript:;" onclick="getBoxes()">get boxes from server</a>
+      <div class="boxes">
+
+      </div>
+
+      <p>
+        You have to match the route filteres to get the desired response.
+      </p>
+      <a href="javascript:;" onclick="getUsers()">get users from server</a>
+      <div class="users">
+
+      </div>
+
+
+      <br><br>
+      <h3>Send JSON DATA to server</h3>
+      <p>
+        Using miniRouter, data sent with content-type 'application/json' can be accessed through `$_REQUEST['JSON_DATA']` directly.
+      </p>
+      <p>
+        Try sending a POST request with json data and the server will echo back what he recieved from you.
+      </p>
+      <a href="javascript:;" onclick="postWishList()">Post Wish List</a>
+      <div class="echo-list">
+
+      </div>
+      <br><br><br><br>
+
+      <script type="text/javascript">
+        baseURL = window.location.protocol + "//" + window.location.host + "/examples";
+
+        function simpleRequest(method) {
+          $.ajax({
+            method: method,
+            url: baseURL + '/method',
+            dataType: 'text',
+            success: function(result){
+              alert(result);
+            }
+          })
+        }
+
+        function pingPong(moveType) {
+          $.ajax({
+            method: "PUT",
+            url: baseURL + '/api/ping-pong',
+            dataType: 'text',
+            data: {
+              move: moveType
+            },
+            success: function(result){
+              alert(result)
+            }
+          });
+        }
+
+        function getBoxes() {
+          $.ajax({
+            method: "GET",
+            url: baseURL + '/api/boxes',
+            dataType: 'json',
+            success: function(result, state){
+              console.log("Request boxes from server state: "+state);
+              console.log("Type of server response is: "+ typeof result);
+              console.log(result);
+
+              var listString = "<ul>";
+              result.forEach(function(box) {
+                  listString += "<li>"+box+"</li>";
+              });
+              listString += "</ul>";
+              $(".boxes").html(listString).append("Check Console for more info.");
+            }
+          });
+        }
+
+        function getUsers() {
+          $.ajax({
+            method: "GET",
+            url: baseURL + '/api/users',
+            dataType: 'json',
+            success: function(result, state){
+              console.log("Request users from server state: "+state);
+              console.log("Type of server response is: "+ typeof result);
+              console.log(result);
+
+              var listString = "<ul>";
+              result.forEach(function(user) {
+                listString += "<li><ul>";
+                for (var key in user) {
+                  listString += "<li>"+key+": "+user[key]+"</li>";
+                }
+                listString += "</ul></li>";
+              });
+              listString += "</ul>";
+              $(".users").html(listString).append("Check Console for more info.");
+            }
+          })
+          .fail(function(jqXHR, textStatus, errorThrown) {
+            console.log(textStatus);
+            console.log(jqXHR);
+            console.log(errorThrown);
+            $(".users").html("Error Encountered: "+textStatus).append("<br>Check Console for more info.");
+          });
+        }
+
+        function postWishList() {
+          var wishList = [
+            {
+              name: "Unicorn",
+              color: "Pink",
+            },
+            {
+              name: "Doll",
+              color: "Red",
+              gender: "Female",
+              hair: "long"
+            },
+            {
+              name: "Swiss Knife",
+              color: "Black",
+              numberOfFunctions: 55
+            }
+          ];
+          $.ajax({
+            method: "POST",
+            url: baseURL + '/api/echo',
+            contentType: "application/json",
+            dataType: 'text',
+            data: JSON.stringify({ list: wishList }),
+            success: function(result, state){
+              console.log("Request boxes from server state: "+state);
+              console.log("Type of server response is: "+ typeof result);
+
+              $(".echo-list").html(result);
+            }
+          })
+          .fail(function(jqXHR, textStatus, errorThrown) {
+            console.log(textStatus);
+            console.log(jqXHR);
+            console.log(errorThrown);
+            $(".echo-list").html(jqXHR.responseText).append("<br>Check Console for more info.");
+          });
+        }
+
+
+      </script>
+    </body>
+
+</html>
