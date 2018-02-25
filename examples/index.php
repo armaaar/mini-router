@@ -11,7 +11,7 @@ $router = new miniRouter();
 
 require_once('filters.php');
 
-// The router adds only the domain name at the begining of any route
+// The router adds only the domain name at the beginning of any route
 // so if you want all your routes inside a subfolder or subdirectory
 // group all your routes with the folder name as prefix
 $router->group("/examples", function($router){
