@@ -61,21 +61,27 @@ $router->group("/examples", function($router){
     echo "Hello, $name!";
   });
 
+
   // We can assign a name to a route to use later for reverse routing
   $router->get(['/welcome/{:s}/{:s}', "welcome"], "welcomePageController");
 
-  // Route can just call the named function without redirecting to it
-  $router->get('/welcome-clone/{:s}?/', "welcomeCloneController");
-
-  // Or it can redirect the request to the named route
+  // We can redirect the request to a named route
   // Note that redirected routed can only be with GET or HEAD requests
   $router->get('/welcome-redirect/{:s}?/', "welcomeRedirectController");
+
+  // Route can just call the named function without redirecting to it
+  // This feature can be used as a middleware if needed
+  $router->get('/welcome-clone/{:s}?/', "welcomeCloneController");
 
 
   // a controller can be a method inside an object
   $router->get('/hello-user', [new UserControllers(), 'helloUser']);
 
+  // a controller can be a static method of a class
+  $router->get('/static-hello-user/{:s}?', ['UserControllers', 'staticHelloUser']);
+
   // You can Add a filter that must be true before a router can be accessed
+  // try changing return values of filters inside `filter.php` to access this page
   $router->get('/laugh', function(){
     echo "Admins are so funny. HA HA HA!";
   }, "is_admin");
@@ -105,10 +111,11 @@ $router->group("/examples", function($router){
 });
 
 // The fallback route is the route served if no route was matched yet
-// MAKE SURE THAT the fallback route is the last route in your list because
-// if it is called before the requested route both the fallback and the requested route will execute their callbacks
-// This behaviour is left unchanged to allow several fallbacks in case that
-// an app needs to execute some function if a list of routes aren't matched
 $router->fallback(function(){
   echo "Page Not Found";
 });
+
+// No routes would be matched without starting the routing function
+// This allows the router to register all routes first before running any controller
+// this is useful for reverse routing
+$router->start_routing();

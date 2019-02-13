@@ -14,6 +14,10 @@ class UserControllers
     echo "Hello, ".$this->username."!";
   }
 
+  public static function staticHelloUser($username = "static user") {
+    echo "Hello, ".$username."!";
+  }
+
   public function settingsView() {
     echo "You can change your settings from this page. You better be authenticated!";
   }

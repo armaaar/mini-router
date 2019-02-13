@@ -43,7 +43,7 @@
       </div>
 
       <p>
-        You have to match the route filteres to get the desired response.
+        You have to match the route filteres to get the desired response. Make sure that `is_admin` filter passes to get users from server.
       </p>
       <a href="javascript:;" onclick="getUsers()">get users from server</a>
       <div class="users">
@@ -54,7 +54,7 @@
       <br><br>
       <h3>Send JSON DATA to server</h3>
       <p>
-        Using miniRouter, data sent with content-type 'application/json' can be accessed through `$_REQUEST['JSON_DATA']` directly.
+        Using miniRouter, data sent with content-type 'application/json' can be accessed from `$_REQUEST` directly.
       </p>
       <p>
         Try sending a POST request with json data and the server will echo back what he recieved from you.

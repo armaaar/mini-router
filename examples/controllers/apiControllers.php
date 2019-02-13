@@ -7,7 +7,7 @@ function getInterface()
 
 function pingPong()
 {
-  // Using miniRouter, parameters passed with HEAD, PUT, PATCH and DELETE methods
+  // Using miniRouter, parameters passed through any method
   // Can be accessed from the global $_REQUEST variable
   if(isset($_REQUEST["move"])) {
     $userMove = strtolower($_REQUEST["move"]);
@@ -43,6 +43,6 @@ function getUsers(){
 }
 
 function echoBack(){
-  // Using miniRouter, data sent with content-type 'application/json' can be accessed through `$_REQUEST['JSON_DATA']` directly.
-  var_dump($_REQUEST['JSON_DATA']);
+  // Using miniRouter, data sent with content-type 'application/json' can be accessed from `$_REQUEST` directly.
+  var_dump($_REQUEST);
 }

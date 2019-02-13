@@ -28,16 +28,18 @@ require_once('miniRouter.php');
 
 $router = new miniRouter();
 
-$router->get($route, $handler);    # match only get requests
-$router->post($route, $handler);   # match only post requests
-$router->put($route, $handler); # match only put requests
-$router->delete($route, $handler); # match only delete requests
-$router->patch($route, $handler); # match only patch requests
-$router->head($route, $handler); # match only head requests
-$router->any($route, $handler);    # match any request method
+$router->get($route, $handler);     # match only get requests
+$router->post($route, $handler);    # match only post requests
+$router->put($route, $handler);     # match only put requests
+$router->delete($route, $handler);  # match only delete requests
+$router->patch($route, $handler);   # match only patch requests
+$router->head($route, $handler);    # match only head requests
+$router->any($route, $handler);     # match any request method
 
 ```
-These methods accepts the HTTP method the route must match, the route pattern and a callable handler, which can be a closure, function name or ['ClassName', 'method'] pair. Note that the router doesn't by default echo the returned value from the handler, so if you want to send something back to the client you need to `echo` it, not to `return` it.
+These methods are defined by the HTTP method the route must match, and accept the route pattern and a callable handler, which can be a closure, function name or ['ClassName', 'method'] pair.
+
+Note that the router doesn't by default echo the returned value from the handler, so if you want to send something back to the client you need to `echo` it, not to `return` it.
 
 ### Regex Shortcuts
 
@@ -78,7 +80,7 @@ Here are some examples of using regex and shortcuts in routes
 
 ### Named Routes for Reverse Routing
 
-Pass in an array as the first argument, where the first item is your route and the second item is a name with which to reference it later.
+Pass in an array as the first argument, where the first item is your route and the second item is a name to reference it later.
 
 ```PHP
 $router->get(['/user/{:a}', 'username'], function($name){
@@ -89,14 +91,14 @@ $router->get(['/page/{:s}/{:i}', 'page'], function($slug, $id){
     echo 'You must be authenticated to see this page: ' . $id;
 });
 
-// Use the route name and pass in any route parameters to reverse engineer an existing route path
+// Use the route name and pass any route parameters to redirect the browser to existing route path
 // If you change your route path above, you won't need to go through your code updating any links/references to that route
 $router->route('username', 'joe');
-// this will call the handler of the path '/user/joe'
+// this will redirect the browser to the path '/user/joe'
 
-// if you passed a true value to the third argument, the browser will be redirected to the specified route
-$router->route('page', ['intro', 234], true);
-// this will redirect the browser to the path '/page/intro/234'
+// if you passed a false value to the third argument, the browser will call the handler of the specified route without redirecting
+$router->route('page', ['intro', 234], false);
+// this will call the handler of the path '/page/intro/234'
 ```
 
 ### Groups
@@ -123,7 +125,7 @@ It's good to notice that the router adds only the domain name at the beginning o
 
 ### Filters
 
-You can Add a filter that must be true before a route can be accessed
+You can Add a filter that must be true before a route can be accessed. 
 
 ```PHP
 
@@ -139,14 +141,14 @@ $router->get('/user/{:a}', function($name){
     echo 'Hello ' . $name;
 }, "isLoggedIn");
 ```
+If the filter returned any value that if casted to boolean will be `false`, it will prevent the route handler from being dispatched. You can check `false` values from [PHP booleans documentation](https://secure.php.net/manual/en/language.types.boolean.php#language.types.boolean.casting)
 
 ### Filter Groups
 
-Wrap multiple routes in a route group to apply that filter to every route defined within. You can nest route groups if required.
+Wrap multiple routes in a route group to apply a filter to every route defined within. You can nest groups if required.
 
 ```php
 
-// Any thing other than null returned from a filter will prevent the route handler from being dispatched
 $router->filter('auth', function(){    
     if(!isset($_SESSION['user']))
     {
@@ -169,7 +171,7 @@ $router->group('/', function($router){
 }, "auth");
 ```
 
-Check examples for more detailed practical use examples for miniRouter, specially for RESTful APIs.
+Check examples for more detailed practical use examples for miniRouter, especially for RESTful APIs.
 
 ## License
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
