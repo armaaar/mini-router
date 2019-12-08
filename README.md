@@ -36,6 +36,7 @@ $router->patch($route, $handler);   # match only patch requests
 $router->head($route, $handler);    # match only head requests
 $router->any($route, $handler);     # match any request method
 
+$router->start_routing();
 ```
 These methods are defined by the HTTP method the route must match, and accept the route pattern and a callable handler, which can be a closure, function name or ['ClassName', 'method'] pair.
 
