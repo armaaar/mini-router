@@ -122,15 +122,34 @@ $router->group('/admin', function($router){
     });
 });
 ```
+
+Groups can also define parameters in URL, parameters defined in a group is also passed to all group routes by default.
+
+```PHP
+
+$router->group('/api/v{:i}', function($router, $api_version){
+
+    $router->get('users', function($version){
+        echo $version;
+    });
+
+    if ($api_version >= 2) {
+        $router->get('order/{:i}', function($api_version, $order_id){
+            echo $api_version;
+        });
+    }
+});
+```
+
 It's good to notice that the router adds only the domain name at the beginning of any route. So if all your routes are inside a subfolder or subdirectory, group all your routes with the folder name as prefix.
 
 ### Filters
 
-You can Add a filter that must be true before a route can be accessed. 
+You can Add a filter that must be true before a route can be accessed.
 
 ```PHP
 
-$router->filter('isLoggedIn', function(){    
+$router->filter('isLoggedIn', function(){
     if($_SESSION['logged_in']) {
       return true
     } else {
@@ -150,7 +169,7 @@ Wrap multiple routes in a route group to apply a filter to every route defined w
 
 ```php
 
-$router->filter('auth', function(){    
+$router->filter('auth', function(){
     if(!isset($_SESSION['user']))
     {
         header('Location: /login');

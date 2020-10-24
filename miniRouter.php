@@ -84,7 +84,7 @@ class miniRouter
         }
     }
 
-    private function uri_match($uri) {
+    private function uri_match($uri, $group_match = false) {
         /*
         * Knows if the current URI is the same as the supplied URI
         * If true, returns the route parameters if any
@@ -100,7 +100,8 @@ class miniRouter
         // Escape back slashes in URI
         $uri = preg_replace('/(\/+)/','\/',$uri);
         // return false if the URIs don't match
-        if (!preg_match("/^".$uri."?$/", $current_uri, $matches)) {
+        $regex = $group_match ? "/^".$uri."?/" : "/^".$uri."?$/";
+        if (!preg_match($regex, $current_uri, $matches)) {
             return false;
         }
         // remove the whol URI from the matched groups and leave the groups only
@@ -124,8 +125,15 @@ class miniRouter
         if ($this->filters_pass($filters)) {
             // add group prefix to the current prefixes list before registering routes
             array_push($this->prefixes, $prefix);
-            // call the callback containing routes which needed to be registered in the current group using its prefix
-            $callback($this);
+            // pass matched parameters to callback if any
+            $parameters = $this->uri_match('', true);
+            // return false if the route URI didn't match the current URI
+            if ($parameters !== false) {
+                // add router instance to parameters
+                array_unshift($parameters, $this);
+                // call the callback containing routes which needed to be registered in the current group using its prefix
+                call_user_func_array($callback, $parameters);
+            }
             // remove the added group prefix so it doesn't affect other coming routes outside the group
             array_pop($this->prefixes);
         }
@@ -378,4 +386,3 @@ class miniRouter
         return true;
     }
 }
-?>
