@@ -1,0 +1,26 @@
+{
+    "name": "armaaar/mini-router",
+    "description": "Fast PHP router based on regular expressions",
+    "type": "library",
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "MiniRouter\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "MiniRouter\\Examples\\": "examples/"
+        },
+        "files": ["examples/Controllers/functionControllers.php"]
+    },
+    "authors": [
+        {
+            "name": "Ahmed Rafik Ibrahim",
+            "email": "ahmedrafik_maaar@outlook.com"
+        }
+    ],
+    "require": {
+        "php": ">=8.0"
+    }
+}

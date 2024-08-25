@@ -1,6 +1,8 @@
 <?php
 
-class miniRouter
+namespace MiniRouter;
+
+class MiniRouter
 {
     private $prefixes = [];
     private $filters = [];
@@ -11,8 +13,8 @@ class miniRouter
     private $matched_route_parameters = [];
     private $regexShortcuts = array(
         '{:i}'  => '([0-9]+)',
-      	'{:a}'  => '([0-9A-Za-z]+)',
-      	'{:h}'  => '([0-9A-Fa-f]+)',
+        '{:a}'  => '([0-9A-Za-z]+)',
+        '{:h}'  => '([0-9A-Fa-f]+)',
         '{:s}'  => '([a-zA-Z0-9+_\-\.]+)'
     );
 
@@ -146,7 +148,7 @@ class miniRouter
     }
     // check if a list of filters passes
     private function filters_pass($filters) {
-        // make sure filters' names are suplied to the function
+        // make sure filters' names are supplied to the function
         if ($filters) {
             // make sure filters are array to generalize the code
             if (!is_array($filters)) {
@@ -197,7 +199,7 @@ class miniRouter
             trigger_error("Route '$name' is not defined", E_USER_WARNING);
             return false;
         }
-        // store ord prefixes temporarly and insert requested route prefixes instead
+        // store ord prefixes temporarily and insert requested route prefixes instead
         $old_prefixes = $this->prefixes;
         $this->prefixes = $this->routes[$name]["prefixes"];
 
@@ -221,7 +223,7 @@ class miniRouter
             // Add prefixes to the route URI
             $uri = $this->add_prefixes_to_uri($this->routes[$name]["uri"]);
 
-            // inster passed arguments to route URI before redirecting
+            // insert passed arguments to route URI before redirecting
             if (preg_match_all('/({:\w}|\([^\)]+\)*)\??/', $uri, $patterns)) {
                 $patterns = $patterns[0];
                 foreach ($patterns as $index => $pattern) {
@@ -238,7 +240,7 @@ class miniRouter
             header("Location: ".$uri);
             return true;
 
-        } else { // IF this is an innner route request (not a redirect)
+        } else { // IF this is an inner route request (not a redirect)
             // route only for the same http method
             if(!$this->routes[$name]["method"] === $this->http_method()  && $this->routes[$name]["method"] !== "ANY") {
             trigger_error("Can't redirect to route '$name' because it has different method from requested", E_USER_WARNING);

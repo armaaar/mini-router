@@ -1,22 +1,26 @@
 <?php
 
-global $router;
+namespace MiniRouter\Examples;
 
-// test booleans
-$user = true;
-$admin = false;
+class Filters
+{
+    static bool $isLoggedIn = true;
+    static bool $isAdmin = false;
 
-$router->filter("is_user", function(){
-  global $user;
-  if($user)
-    return true;
-  return false;
-});
+    static function addFilters() {
+        $router = SingletonRouter::getRouter();
+
+        $router->filter("is_user", function(){
+            if(self::$isLoggedIn)
+                return true;
+            return false;
+        });
 
 
-$router->filter("is_admin", function(){
-  global $admin;
-  if($admin)
-    return true;
-  return false;
-});
+        $router->filter("is_admin", function(){
+            if(self::$isAdmin)
+                return true;
+            return false;
+        });
+    }
+}

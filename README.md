@@ -1,9 +1,11 @@
-# miniRouter - Fast PHP regex based router
-miniRouter is a fast PHP router based on regular expressions inspired from [PHRoute](https://github.com/mrjgreen/phroute).
+# mini-router - Fast PHP regex based router
+
+mini-router is a fast PHP router based on regular expressions inspired from [PHRoute](https://github.com/mrjgreen/phroute).
 It is build essentially to support RESTful APIs with simple, yet powerful, high speed interface.
 
 ## Installation
-Just include the `miniRouter.php` file in your index page and start using it.
+
+Install via composer or just include the `src/MiniRouter.php` file in your index page and start using it.
 
 ### Friendly URL
 
@@ -14,19 +16,20 @@ Options -MultiViews
 RewriteEngine On
 RewriteCond %{REQUEST_URI} !\..+$
 RewriteRule .* index.php [QSA,L]
-
 ```
+
 Check the examples for implementation.
 
 ## Usage
+
 ### Defining routes
 
-miniRouter supports GET, HEAD, POST, PUT, PATCH and DELETE methods.
+mini-router supports GET, HEAD, POST, PUT, PATCH and DELETE methods.
 
 ```PHP
-require_once('miniRouter.php');
+use MiniRouter\MiniRouter;
 
-$router = new miniRouter();
+$router = new MiniRouter();
 
 $router->get($route, $handler);     # match only get requests
 $router->post($route, $handler);    # match only post requests
@@ -38,6 +41,7 @@ $router->any($route, $handler);     # match any request method
 
 $router->start_routing();
 ```
+
 These methods are defined by the HTTP method the route must match, and accept the route pattern and a callable handler, which can be a closure, function name or ['ClassName', 'method'] pair.
 
 Note that the router doesn't by default echo the returned value from the handler, so if you want to send something back to the client you need to `echo` it, not to `return` it.
@@ -46,13 +50,13 @@ Note that the router doesn't by default echo the returned value from the handler
 
 URLs can use regular expressions directly into the URL or use one of these shortcuts
 
-```
+```text
 {:i}  => ([0-9]+)              # numbers only
 {:a}  => ([0-9A-Za-z]+)        # alphanumeric
 {:h}  => ([0-9A-Fa-f]+)        # hex
 {:s}  => ([a-zA-Z0-9+_\-\.]+)  # alphanumeric and + _ - . characters
-
 ```
+
 Here are some examples of using regex and shortcuts in routes
 
 ```PHP
@@ -103,6 +107,7 @@ $router->route('page', ['intro', 234], false);
 ```
 
 ### Groups
+
 Groups apply prefixes to URLS.
 
 ```PHP
@@ -161,7 +166,8 @@ $router->get('/user/{:a}', function($name){
     echo 'Hello ' . $name;
 }, "isLoggedIn");
 ```
-If the filter returned any value that if casted to boolean will be `false`, it will prevent the route handler from being dispatched. You can check `false` values from [PHP booleans documentation](https://secure.php.net/manual/en/language.types.boolean.php#language.types.boolean.casting)
+
+If the filter returns any falsy value, it will prevent the route handler from being dispatched. You can check falsy values from [PHP booleans documentation](https://secure.php.net/manual/en/language.types.boolean.php#language.types.boolean.casting)
 
 ### Filter Groups
 
@@ -172,13 +178,13 @@ Wrap multiple routes in a route group to apply a filter to every route defined w
 $router->filter('auth', function(){
     if(!isset($_SESSION['user']))
     {
-        header('Location: /login');
+        $router->route('login');
         return false;
     }
     return true;
 });
 
-$router->group('/', function($router){
+$router->group('/portal', function($router){
 
     $router->get('/user/{:a}', function($name){
         echo 'Hello ' . $name;
@@ -189,9 +195,14 @@ $router->group('/', function($router){
     });
 
 }, "auth");
+
+$router->get(['/login', 'login'], function($name){
+    echo 'Please login...'
+});
 ```
 
-Check examples for more detailed practical use examples for miniRouter, especially for RESTful APIs.
+Check examples for more detailed practical use examples for mini-router, especially for RESTful APIs.
 
 ## License
+
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
