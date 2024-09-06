@@ -7,7 +7,7 @@ class Filters
     static bool $isLoggedIn = true;
     static bool $isAdmin = false;
 
-    static function addFilters() {
+    static function addFilters(): void {
         $router = SingletonRouter::getRouter();
 
         $router->filter("is_user", function(){

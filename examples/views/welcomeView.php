@@ -10,7 +10,7 @@
 </head>
 
 <body>
-    Welcome Home <?php echo $name1 ?> and <?php echo $name2 ?>!
+    Welcome Home <?php echo $name1 ?? 'Anon' ?> and <?php echo $name2 ?? 'Anon' ?>!
 </body>
 
 </html>

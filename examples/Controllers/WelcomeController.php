@@ -6,12 +6,13 @@ use MiniRouter\Examples\SingletonRouter;
 
 abstract class WelcomeController
 {
-    static function welcomeView($name1, $name2)
+    static function welcomeView(string $name1, string $name2): void
     {
         include "views/welcomeView.php";
     }
 
-    static function welcomeRedirect($name="Morad"){
+    static function welcomeRedirect(string $name="Morad"): void
+    {
         // get the global router object to use its registered routes
         $router = SingletonRouter::getRouter();
         // if the third argument is true
@@ -19,7 +20,8 @@ abstract class WelcomeController
         $router->route("welcome", ["Redirected", $name]);
     }
 
-    static function welcomeClone($name="Hassan"){
+    static function welcomeClone(string $name="Hassan"): void
+    {
         // get the global router object to use its registered routes
         $router = SingletonRouter::getRouter();
         // route to the route named "welcome" with the following parameters

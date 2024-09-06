@@ -2,12 +2,12 @@
 
 namespace MiniRouter\Examples\Controllers;
 
-function simpleController()
+function simpleController(): void
 {
     echo "This page is generated using a controller function";
 }
 
-function simpleViewController()
+function simpleViewController(): void
 {
     include "views/simpleView.html";
 }

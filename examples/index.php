@@ -8,6 +8,7 @@ use MiniRouter\Examples\Controllers\UserControllers;
 use MiniRouter\Examples\Controllers\WelcomeController;
 use MiniRouter\Examples\Filters;
 use MiniRouter\Examples\SingletonRouter;
+use MiniRouter\MiniRouter;
 
 $router = SingletonRouter::getRouter();
 Filters::addFilters();
@@ -15,7 +16,7 @@ Filters::addFilters();
 // The router adds only the domain name at the beginning of any route
 // so if you want all your routes inside a subfolder or subdirectory
 // group all your routes with the folder name as prefix
-$router->group("/mini-router", function($router){
+$router->group("/mini-router", function(MiniRouter $router){
 
     // simple route
     $router->get('/', function(){
@@ -36,18 +37,18 @@ $router->group("/mini-router", function($router){
 
 
     // you can pass parameters to controllers through URL using shortcuts
-    $router->get('/hello/{:a}/', function($name) {
+    $router->get('/hello/{:a}/', function(string $name) {
         echo "Hello, $name!";
     });
 
     // or you can use regular expressions directly into the URL
-    $router->get('/hello-robot/(\d+)', function($robotNumber) {
+    $router->get('/hello-robot/(\d+)', function(string $robotNumber) {
         echo "Hello robot number $robotNumber!";
     });
 
   // URL parameters assigned to controller parameters in order
   // Note that regex can be used side by side with shortcuts
-    $router->get('/name-match/{:s}/([a-zA-Z0-9+_\-\.]+)', function($name1, $name2) {
+    $router->get('/name-match/{:s}/([a-zA-Z0-9+_\-\.]+)', function(string $name1, string $name2) {
         echo "Hello, $name1!<br>";
         echo "Hello, $name2!<br>";
         if($name1 == $name2) {

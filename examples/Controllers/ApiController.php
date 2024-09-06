@@ -4,12 +4,12 @@ namespace MiniRouter\Examples\controllers;
 abstract class ApiController
 {
 
-    static function getInterface()
+    static function getInterface(): void
     {
         include "views/apiInterface.html";
     }
 
-    static function pingPong()
+    static function pingPong(): void
     {
       // Using mini-router, parameters passed through any method
       // Can be accessed from the global $_REQUEST variable
@@ -27,11 +27,13 @@ abstract class ApiController
         }
     }
 
-    static function getBoxes(){
+    static function getBoxes(): void
+    {
         echo json_encode(["box of tools", "box of toys", "box of frogs"]);
     }
 
-    static function getUsers(){
+    static function getUsers(): void
+    {
         $users = array();
 
         for ($i=0; $i < 5; $i++) {
@@ -46,7 +48,8 @@ abstract class ApiController
         echo json_encode($users);
     }
 
-    static function echoBack(){
+    static function echoBack(): void
+    {
         // Using mini-router, data sent with content-type 'application/json' can be accessed from `$_REQUEST` directly.
         var_dump($_REQUEST);
     }
